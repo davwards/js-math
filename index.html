@@ -50,7 +50,7 @@
             const lastStep = path[path.length - 1];
             const nextStep = nextStepFrom(lastStep, seedPoint);
             if (distanceFromZero(nextStep) >= 2) {
-                observer.notInTheSet(seedPoint);
+                observer.notInTheSet(seedPoint, path.length);
                 return;
             }
             path.push(nextStep);
@@ -58,14 +58,19 @@
         return observer.inTheSet(seedPoint);
     }
 
+    function grayscaleFor(pathLength) {
+        const colorValue = Math.round(Math.sin(pathLength) * 127 + 127);
+        return `rgb(${colorValue},${colorValue},${colorValue})`;
+    }
+
     for (let x = -2; x <= 2; x += 0.004) {
         for (let y = -2; y <= 2; y += 0.004) {
             const seedPoint = {x, y};
             mandelbrot(seedPoint, {
-                inTheSet(point) {
-                    drawPixel(pixelForPoint(point), "white");
-                },
-                notInTheSet(point) {}
+                inTheSet(point) {},
+                notInTheSet(point, pathLength) {
+                    drawPixel(pixelForPoint(point), grayscaleFor(pathLength));
+                }
             });
         }
     }
