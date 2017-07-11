@@ -44,27 +44,32 @@
         return Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.y, 2));
     }
 
-    function explodes(seedPoint) {
+    function mandelbrot(seedPoint, observer) {
         const path = [{x: 0, y: 0}];
         while (path.length < BASICALLY_INFINITY) {
             const lastStep = path[path.length - 1];
             const nextStep = nextStepFrom(lastStep, seedPoint);
             if (distanceFromZero(nextStep) >= 2) {
-                return true;
+                observer.notInTheSet(seedPoint);
+                return;
             }
             path.push(nextStep);
         }
-        return false;
+        return observer.inTheSet(seedPoint);
     }
 
     for (let x = -2; x <= 2; x += 0.004) {
         for (let y = -2; y <= 2; y += 0.004) {
             const seedPoint = {x, y};
-            if (!explodes(seedPoint)) {
-                drawPixel(pixelForPoint(seedPoint), "white");
-            }
+            mandelbrot(seedPoint, {
+                inTheSet(point) {
+                    drawPixel(pixelForPoint(point), "white");
+                },
+                notInTheSet(point) {}
+            });
         }
     }
+    console.log("Done!");
 
 </script>
 </body>
