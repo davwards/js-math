@@ -63,15 +63,22 @@
         return `rgb(${colorValue},${colorValue},${colorValue})`;
     }
 
+    const grayscaleObserver = {
+        inTheSet(point) {},
+        notInTheSet(point, pathLength) {
+            drawPixel(pixelForPoint(point), grayscaleFor(pathLength));
+        }
+    };
+
+    const blackAndWhiteObserver = {
+        inTheSet(point) { drawPixel(pixelForPoint(point), "white") },
+        notInTheSet(point) {}
+    };
+
     for (let x = -2; x <= 2; x += 0.004) {
         for (let y = -2; y <= 2; y += 0.004) {
             const seedPoint = {x, y};
-            mandelbrot(seedPoint, {
-                inTheSet(point) {},
-                notInTheSet(point, pathLength) {
-                    drawPixel(pixelForPoint(point), grayscaleFor(pathLength));
-                }
-            });
+            mandelbrot(seedPoint, grayscaleObserver);
         }
     }
     console.log("Done!");
