@@ -50,7 +50,7 @@
             const lastStep = path[path.length - 1];
             const nextStep = nextStepFrom(lastStep, seedPoint);
             if (distanceFromZero(nextStep) >= 2) {
-                observer.notInTheSet(seedPoint, path.length);
+                observer.notInTheSet(seedPoint, path);
                 return;
             }
             path.push(nextStep);
@@ -65,8 +65,8 @@
 
     const grayscaleObserver = {
         inTheSet(point) {},
-        notInTheSet(point, pathLength) {
-            drawPixel(pixelForPoint(point), grayscaleFor(pathLength));
+        notInTheSet(point, path) {
+            drawPixel(pixelForPoint(point), grayscaleFor(path.length));
         }
     };
 
@@ -75,10 +75,19 @@
         notInTheSet(point) {}
     };
 
+    const densityObserver = {
+        inTheSet(point) {},
+        notInTheSet(_, path) {
+            path.forEach(point => {
+              drawPixel(pixelForPoint(point), "rgba(255,255,255,0.1)");
+            });
+        }
+    };
+
     for (let x = -2; x <= 2; x += 0.004) {
         for (let y = -2; y <= 2; y += 0.004) {
             const seedPoint = {x, y};
-            mandelbrot(seedPoint, grayscaleObserver);
+            mandelbrot(seedPoint, densityObserver);
         }
     }
     console.log("Done!");
