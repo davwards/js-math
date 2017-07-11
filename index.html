@@ -1,0 +1,71 @@
+<html>
+<head>
+    <title>Excellent Math</title>
+</head>
+<body bgcolor="black">
+<canvas></canvas>
+
+<script type="text/javascript">
+    const CANVAS_WIDTH = 1000;
+    const CANVAS_HEIGHT = 1000;
+    const BASICALLY_INFINITY = 1000;
+
+    const canvas = document.getElementsByTagName("canvas")[0];
+
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+    const context = canvas.getContext("2d");
+
+    function drawPixel(pixel, color) {
+        context.fillStyle = color;
+        context.fillRect(pixel.x, pixel.y, 1, 1);
+    }
+
+    function pixelForPoint(point) {
+        return {
+            x: (point.x + 2) / 4 * CANVAS_WIDTH,
+            y: (-point.y + 2) / 4 * CANVAS_HEIGHT
+        };
+    }
+
+    function nextStepFrom(lastStep, seedPoint) {
+        const lastStepSquared = {
+            x: Math.pow(lastStep.x, 2) - Math.pow(lastStep.y, 2),
+            y: 2 * lastStep.x * lastStep.y
+        };
+
+        return {
+            x: lastStepSquared.x + seedPoint.x,
+            y: lastStepSquared.y + seedPoint.y
+        };
+    }
+
+    function distanceFromZero(point) {
+        return Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.y, 2));
+    }
+
+    function explodes(seedPoint) {
+        const path = [{x: 0, y: 0}];
+        while (path.length < BASICALLY_INFINITY) {
+            const lastStep = path[path.length - 1];
+            const nextStep = nextStepFrom(lastStep, seedPoint);
+            if (distanceFromZero(nextStep) >= 2) {
+                return true;
+            }
+            path.push(nextStep);
+        }
+        return false;
+    }
+
+    for (let x = -2; x <= 2; x += 0.004) {
+        for (let y = -2; y <= 2; y += 0.004) {
+            const seedPoint = {x, y};
+            if (!explodes(seedPoint)) {
+                drawPixel(pixelForPoint(seedPoint), "white");
+            }
+        }
+    }
+
+</script>
+</body>
+</html>
